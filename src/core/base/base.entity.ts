@@ -2,8 +2,10 @@ import {
   UpdateDateColumn,
   CreateDateColumn,
   PrimaryColumn,
-  DeleteDateColumn, PrimaryGeneratedColumn, Column
-} from "typeorm";
+  DeleteDateColumn,
+  PrimaryGeneratedColumn,
+  Column,
+} from 'typeorm';
 import { Exclude } from 'class-transformer';
 
 export class BaseEntity {

@@ -1,13 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-  DeleteResult,
-  FindManyOptions,
-  ObjectLiteral,
-  Repository,
-  UpdateResult,
-} from 'typeorm';
-import { instanceToPlain } from 'class-transformer';
-import { JwtService } from '@nestjs/jwt';
+import { DeleteResult, ObjectLiteral, Repository, UpdateResult } from 'typeorm';
 
 @Injectable()
 export abstract class BaseService<T extends ObjectLiteral> {

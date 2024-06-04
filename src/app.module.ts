@@ -5,8 +5,6 @@ import { RouteV1Module } from './routes/router-v1.module';
 import { DatabaseModule } from './config/database.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UserModule } from './modules/user/user.module';
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { User } from "./entities/user.entity";
 
 @Module({
   imports: [
