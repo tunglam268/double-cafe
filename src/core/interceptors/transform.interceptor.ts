@@ -23,8 +23,8 @@ export class TransformInterceptor<T>
     return next.handle().pipe(
       map((data) => ({
         statusCode: context.switchToHttp().getResponse().statusCode,
-        message: data?.message || null,
-        data: data?.data || data,
+        message: 'Success' || 'Fail',
+        data: data || null,
       })),
     );
   }

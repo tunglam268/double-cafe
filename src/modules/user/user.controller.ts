@@ -2,17 +2,20 @@ import {
   BadRequestException,
   Body,
   Controller,
-  HttpCode,
-  HttpStatus,
+  Get,
+  Param,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { RegisterUserDTO } from '../../dto/user.dto';
+import { FilterDTO, RegisterUserDTO } from '../../dto/user.dto';
 import { MessageEnum, UserStatusEnum } from '../../core/base/base.enum';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import * as bcrypt from 'bcrypt';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { PageDto, PageOptionsDto } from '../../dto/pagination.dto';
+import { User } from '../../entities/user.entity';
 
 @ApiTags('user')
 @Controller()
@@ -50,5 +53,15 @@ export class UserController {
       phone: request.phone,
     });
     return MessageEnum.CREATE_SUCCESS;
+  }
+
+  @Get('/list')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  async ListUsers(
+    @Query() filter: FilterDTO,
+    @Query() pagination: PageOptionsDto,
+  ): Promise<PageDto<User>> {
+    return await this.userService.Pagination(filter, pagination);
   }
 }
