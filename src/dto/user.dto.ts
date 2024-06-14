@@ -1,17 +1,18 @@
 import {
   IsEmail,
-  IsNotEmpty, IsNumber,
+  IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsPhoneNumber,
   IsString,
   Matches,
   Max,
-  Min
-} from "class-validator";
+  Min,
+} from 'class-validator';
 import { VALIDATION } from '../core/validation/validation';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { PageOptionsDto } from "./pagination.dto";
-import { Transform } from "class-transformer";
+import { PageOptionsDto } from './pagination.dto';
+import { Transform } from 'class-transformer';
 
 export class RegisterUserDTO {
   @ApiProperty()
@@ -54,7 +55,7 @@ export class RegisterUserDTO {
   phone: string;
 }
 
-export class FilterDTO extends PageOptionsDto{
+export class FilterDTO extends PageOptionsDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsEmail()

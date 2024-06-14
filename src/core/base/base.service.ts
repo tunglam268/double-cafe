@@ -1,13 +1,12 @@
-import { Injectable } from "@nestjs/common";
-import { DeleteResult, ObjectLiteral, Repository, UpdateResult } from "typeorm";
-import { PageDto, PageMetaDto, PageOptionsDto } from "../../dto/pagination.dto";
+import { Injectable } from '@nestjs/common';
+import { DeleteResult, ObjectLiteral, Repository, UpdateResult } from 'typeorm';
+import { PageDto, PageMetaDto, PageOptionsDto } from '../../dto/pagination.dto';
 
 type FilterType = Record<any, any>;
 
 @Injectable()
 export abstract class BaseService<T extends ObjectLiteral> {
-  constructor(public repository: Repository<T>) {
-  }
+  constructor(public repository: Repository<T>) {}
 
   async findOne(query: any): Promise<T> {
     return this.repository.findOne(query);
@@ -77,7 +76,7 @@ export abstract class BaseService<T extends ObjectLiteral> {
 
     const pageMetaDto = new PageMetaDto({
       pageOptionsDto: pagination,
-      itemCount
+      itemCount,
     });
 
     return new PageDto(entities, pageMetaDto);

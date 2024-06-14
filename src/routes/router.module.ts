@@ -26,4 +26,4 @@ const routes: Routes = [
 @Module({
   imports: [RouterModule.register(routes), AuthModule, UserModule],
 })
-export class RouteV1Module {}
+export class RouteModule {}
