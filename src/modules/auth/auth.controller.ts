@@ -7,11 +7,12 @@ import {
 } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import * as bcrypt from 'bcrypt';
-import { UserStatusEnum } from '../../core/base/base.enum';
+import { MessageEnum, UserStatusEnum } from '../../core/base/base.enum';
 import { JwtService } from '@nestjs/jwt';
 import { instanceToPlain } from 'class-transformer';
 import { LoginDTO } from '../../dto/auth.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { isEmpty } from 'class-validator';
 
 @ApiTags('auth')
 @Controller()
@@ -23,20 +24,64 @@ export class AuthController {
 
   @Post('login')
   async Login(@Body() request: LoginDTO) {
+    if (request.accessToken) {
+      return this.LoginWithToken(request.accessToken);
+    } else {
+      return this.LoginWithAccount(request.username, request.password);
+    }
+  }
+
+  private async LoginWithToken(accessToken: string) {
+    if (isEmpty(accessToken)) {
+      throw new BadRequestException('Access token is not empty');
+    }
+
+    let payload: any;
+    try {
+      payload = this.jwtService.verify(accessToken);
+    } catch (error) {
+      throw new UnauthorizedException('Token is invalid or expired');
+    }
+
+    if (payload.status != UserStatusEnum.ACTIVE) {
+      throw new UnauthorizedException('User is deactivate');
+    }
+
     const user = await this.userService.findOneBy({
-      username: request.username,
+      uuid: payload.uuid,
+      status: UserStatusEnum.ACTIVE,
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found or inactive');
+    }
+
+    return MessageEnum.LOGIN_SUCCESS;
+  }
+
+  private async LoginWithAccount(username: string, password: string) {
+    if (isEmpty(username) || isEmpty(password)) {
+      throw new BadRequestException('Username && Password is not empty');
+    }
+
+    const user = await this.userService.findOneBy({
+      username: username,
       status: UserStatusEnum.ACTIVE,
     });
     if (!user) {
       throw new BadRequestException('Không tìm thấy người dùng');
     }
-    const compare = await bcrypt.compare(request.password, user.password);
+    const compare = await bcrypt.compare(password, user.password);
 
     if (!compare) {
       throw new UnauthorizedException('Sai thông tin tài khoản và mật khẩu');
     }
 
-    const dataToken = { id: user.uuid, fullName: user.fullName };
+    const dataToken = {
+      uuid: user.uuid,
+      fullName: user.fullName,
+      status: user.status,
+    };
 
     const token = this.GenAccessAndRefreshToken(dataToken, this.jwtService);
 
@@ -66,9 +111,9 @@ export class AuthController {
     };
   }
 
-  async ValidateUser(ID: string, username: string) {
+  async ValidateUser(ID: string, fullName: string) {
     const user = await this.userService.findOneBy({
-      username: username,
+      fullName: fullName,
       uuid: ID,
     });
     if (!user) {

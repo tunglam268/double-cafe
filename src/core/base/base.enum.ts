@@ -5,4 +5,5 @@ export enum UserStatusEnum {
 
 export enum MessageEnum {
   CREATE_SUCCESS = 'Tạo người dùng thành công',
+  LOGIN_SUCCESS = 'Đăng nhập thành công',
 }

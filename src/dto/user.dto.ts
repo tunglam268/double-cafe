@@ -5,6 +5,7 @@ import {
   IsOptional,
   IsPhoneNumber,
   IsString,
+  IsUUID,
   Matches,
   Max,
   Min,
@@ -69,4 +70,12 @@ export class FilterDTO extends PageOptionsDto {
   @ApiPropertyOptional()
   @IsOptional()
   fullName: string;
+}
+
+export class GetUserByFilter {
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsNumber({}, { message: 'ID must be number' })
+  @Transform(({ value }) => parseInt(value, 10), { toClassOnly: true })
+  id: number;
 }

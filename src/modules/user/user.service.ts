@@ -19,6 +19,26 @@ export class UserService extends BaseService<User> {
     filter: FilterDTO,
     pagination: PageOptionsDto,
   ): Promise<PageDto<User>> {
-    return this.pagination(this.repository, filter, pagination, 'users');
+    const selectField = [
+      'id',
+      'createdAt',
+      'updatedAt',
+      'deletedAt',
+      'username',
+      'fullName',
+      'firstName',
+      'lastName',
+      'status',
+      'mail',
+      'phone',
+    ];
+
+    return this.pagination(
+      this.repository,
+      filter,
+      pagination,
+      'users',
+      selectField,
+    );
   }
 }

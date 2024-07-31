@@ -8,8 +8,9 @@ type FilterType = Record<any, any>;
 export abstract class BaseService<T extends ObjectLiteral> {
   constructor(public repository: Repository<T>) {}
 
-  async findOne(query: any): Promise<T> {
-    return this.repository.findOne(query);
+  async getById(id: number, selectFields: string[] = []): Promise<T> {
+    const query: any = { id: id };
+    return this.repository.findOne({ where: query, select: selectFields });
   }
 
   async getOne(query: any): Promise<T> {
@@ -45,9 +46,16 @@ export abstract class BaseService<T extends ObjectLiteral> {
     filter: FilterType,
     pagination: PageOptionsDto,
     alias: string = 'entity',
+    selectFields: string[] = [],
   ): Promise<PageDto<T>> {
     const queryBuilder = repository.createQueryBuilder(alias);
 
+    if (selectFields.length > 0) {
+      const selectAliasFields = selectFields.map(
+        (field) => `${alias}.${field}`,
+      );
+      queryBuilder.select(selectAliasFields);
+    }
     const paginationKeys = [`take`, `order`, `page`];
 
     Object.keys(filter).forEach((key) => {
