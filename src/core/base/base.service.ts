@@ -21,6 +21,10 @@ export abstract class BaseService<T extends ObjectLiteral> {
     return this.repository.findOneBy(query);
   }
 
+  async getAllBy(query: any): Promise<T[]> {
+    return this.repository.findBy(query);
+  }
+
   async updateById(id: string, data: any): Promise<UpdateResult> {
     return this.repository.update(id, data);
   }

@@ -1,10 +1,10 @@
 import {
   BadRequestException,
   Body,
-  Controller,
+  Controller, HttpCode, HttpStatus,
   Post,
-  UnauthorizedException,
-} from '@nestjs/common';
+  UnauthorizedException
+} from "@nestjs/common";
 import { UserService } from '../user/user.service';
 import * as bcrypt from 'bcrypt';
 import { MessageEnum, UserStatusEnum } from '../../core/base/base.enum';
@@ -23,6 +23,7 @@ export class AuthController {
   ) {}
 
   @Post('login')
+  @HttpCode(HttpStatus.OK)
   async Login(@Body() request: LoginDTO) {
     if (request.accessToken) {
       return this.LoginWithToken(request.accessToken);
@@ -111,15 +112,15 @@ export class AuthController {
     };
   }
 
-  async ValidateUser(ID: string, fullName: string) {
+  async ValidateUser(uuid: string, fullName: string) {
     const user = await this.userService.findOneBy({
       fullName: fullName,
-      uuid: ID,
+      uuid: uuid,
     });
     if (!user) {
       throw new UnauthorizedException('Sai thông tin của token');
     }
-    const { id, uuid, password, ...result } = user;
+    const { id, password, ...result } = user;
     return result;
   }
 }

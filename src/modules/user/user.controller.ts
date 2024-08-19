@@ -2,7 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
-  Get,
+  Get, HttpCode, HttpStatus,
   Post,
   Query,
   UseGuards
@@ -19,7 +19,7 @@ import * as bcrypt from "bcrypt";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { PageDto, PageOptionsDto } from "../../dto/pagination.dto";
 import { User } from "../../entities/user.entity";
-import QrScanner from 'qr-scanner';
+import e from "express";
 
 @ApiTags("user")
 @Controller()
@@ -30,22 +30,33 @@ export class UserController {
   @Post("create-user")
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
   async CreateUser(@Body() request: RegisterUserDTO) {
-    const existedUser = await this.userService.findOneBy([
-      {
-        phone: request.phone,
-        status: UserStatusEnum.ACTIVE
-      },
-      {
-        username: request.username,
-        status: UserStatusEnum.ACTIVE
-      }
-    ]);
-    if (existedUser) {
+    const existedUsers = await this.userService.getAllBy(
+      [
+        {
+          username: request.username,
+          status: UserStatusEnum.ACTIVE
+        },
+        {
+          phone: request.phone,
+          status: UserStatusEnum.ACTIVE
+        }
+      ]
+    );
+    const duplicatePhone = existedUsers.find(user => user.phone === request.phone);
+    const duplicateUserName = existedUsers.find(user => user.username === request.username);
+
+    if (duplicatePhone) {
       throw new BadRequestException(
-        "Đã tồn tại tên người dùng hoặc số điện thoại trong hệ thống"
+        "Số điện thoại đã tồn tại trong hệ thống"
+      );
+    } else if (duplicateUserName) {
+      throw new BadRequestException(
+        "Tên người dùng đã tồn tại trong hệ thống"
       );
     }
+
     const hashPassword = await bcrypt.hash(request.password, 5);
     await this.userService.create({
       username: request.username,
@@ -63,6 +74,7 @@ export class UserController {
   @Get("/list")
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
   async ListUsers(
     @Query() filter: FilterDTO,
     @Query() pagination: PageOptionsDto
@@ -73,6 +85,7 @@ export class UserController {
   @Get("/detail")
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
   async GetDetailUser(@Query() request: GetUserByFilter): Promise<User> {
     const selectField = [
       "id",
@@ -88,11 +101,6 @@ export class UserController {
       "phone"
     ];
     return await this.userService.getById(request.id, selectField);
-  }
-
-  @Get('/qrscan')
-  async GetQr() {
-
   }
 
 }

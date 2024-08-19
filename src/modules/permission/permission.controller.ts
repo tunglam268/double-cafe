@@ -12,7 +12,7 @@ export class PermissionController {
   @Get('permission-user')
   @ApiBearerAuth()
   @UseGuards(JwtAuthGuard)
-  GetPermissionUser(@CurrentUser() currentUser: UserInformation) {
+  CreatePermission(@CurrentUser() currentUser: UserInformation) {
     console.log(currentUser);
   }
 }
