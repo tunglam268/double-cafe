@@ -51,9 +51,9 @@ export class UserController {
     );
 
     if (duplicatePhone) {
-      throw new BadRequestException('Số điện thoại đã tồn tại trong hệ thống');
+      throw new BadRequestException(MessageEnum.PHONE_NUMBER_DUPLICATE);
     } else if (duplicateUserName) {
-      throw new BadRequestException('Tên người dùng đã tồn tại trong hệ thống');
+      throw new BadRequestException(MessageEnum.USERNAME_DUPLICATE);
     }
 
     const hashPassword = await bcrypt.hash(request.password, 5);

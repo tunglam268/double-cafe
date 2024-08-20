@@ -21,14 +21,14 @@ export class AuthService {
 
   async LoginWithToken(accessToken: string) {
     if (isEmpty(accessToken)) {
-      throw new BadRequestException('Access token is not empty');
+      throw new BadRequestException(MessageEnum.TOKEN_EMPTY);
     }
 
     let payload: any;
     try {
       payload = this.jwtService.verify(accessToken);
     } catch (error) {
-      throw new UnauthorizedException('Token is invalid or expired');
+      throw new UnauthorizedException(MessageEnum.TOKEN_INVALID);
     }
 
     const user = await this.userService.findOneBy({
@@ -37,7 +37,7 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new UnauthorizedException('User not found or inactive');
+      throw new UnauthorizedException(MessageEnum.USER_NOT_FOUND);
     }
 
     return MessageEnum.LOGIN_SUCCESS;
@@ -45,7 +45,7 @@ export class AuthService {
 
   async LoginWithAccount(username: string, password: string) {
     if (isEmpty(username) || isEmpty(password)) {
-      throw new BadRequestException('Username && Password is not empty');
+      throw new BadRequestException(MessageEnum.USERNAME_PASSWORD_EMPTY);
     }
 
     const user = await this.userService.findOneBy({
@@ -53,12 +53,12 @@ export class AuthService {
       status: UserStatusEnum.ACTIVE,
     });
     if (!user) {
-      throw new BadRequestException('Không tìm thấy người dùng');
+      throw new BadRequestException(MessageEnum.USER_NOT_FOUND);
     }
     const compare = await bcrypt.compare(password, user.password);
 
     if (!compare) {
-      throw new UnauthorizedException('Sai thông tin tài khoản và mật khẩu');
+      throw new UnauthorizedException(MessageEnum.USERNAME_PASSWORD_WRONG);
     }
 
     const dataToken = {
@@ -108,7 +108,7 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new UnauthorizedException('Sai thông tin của token');
+      throw new UnauthorizedException(MessageEnum.TOKEN_INVALID);
     }
 
     const req: Request = RequestContext.currentContext.req;
@@ -125,9 +125,7 @@ export class AuthService {
     });
 
     if (!havePermission) {
-      throw new UnauthorizedException(
-        'Bạn không có quyền sử dụng chức năng này',
-      );
+      throw new UnauthorizedException(MessageEnum.NO_PERMISSION);
     }
 
     const { id, password, ...result } = user;
