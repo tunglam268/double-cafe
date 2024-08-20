@@ -1,4 +1,4 @@
-import { UserStatusEnum } from "../base/base.enum";
+import { UserStatusEnum } from '../base/base.enum';
 
 export class UserInformation {
   uuid: string;

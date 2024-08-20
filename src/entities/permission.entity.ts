@@ -8,4 +8,7 @@ export class Permission extends BaseEntity {
 
   @Column('text', { nullable: true })
   description: string;
+
+  @Column('varchar', { nullable: true, name: 'path_api' })
+  pathApi: string;
 }

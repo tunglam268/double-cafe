@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { SwaggerConfig } from './core/swagger/swagger';
 import { TransformInterceptor } from './core/interceptors/transform.interceptor';
-import * as bodyParser from 'body-parser'
+import * as bodyParser from 'body-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

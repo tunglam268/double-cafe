@@ -33,7 +33,7 @@ const routes: Routes = [
     AuthModule,
     UserModule,
     PermissionModule,
-    RoleModule
+    RoleModule,
   ],
 })
 export class RouteModule {}

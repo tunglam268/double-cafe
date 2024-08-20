@@ -9,10 +9,10 @@ import {
 import { Exclude } from 'class-transformer';
 
 export class BaseEntity {
-  @PrimaryGeneratedColumn('uuid')
+  @Column({ name: 'uuid', type: 'uuid', generated: 'uuid', unique: true })
   uuid: string;
 
-  @Column({ name: 'id', type: 'int', generated: 'increment', unique: true })
+  @PrimaryGeneratedColumn('increment')
   id: number;
 
   @CreateDateColumn({ name: 'created_at' })

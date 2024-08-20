@@ -8,11 +8,4 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 @Controller()
 export class PermissionController {
   constructor() {}
-
-  @Get('permission-user')
-  @ApiBearerAuth()
-  @UseGuards(JwtAuthGuard)
-  CreatePermission(@CurrentUser() currentUser: UserInformation) {
-    console.log(currentUser);
-  }
 }
